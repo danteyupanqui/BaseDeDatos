@@ -17,9 +17,24 @@ JOIN film USING(film_id)
 GROUP BY actor_id
 HAVING COUNT(film_id) > 20;
 -- 3:  Para cada idioma, indica cuántas películas están catalogadas en ese idioma.
+SELECT language_id, COUNT(language.name) AS peliculas,name
+FROM film_category JOIN film USING(film_id)
+JOIN language USING(language_id)
+GROUP BY language_id;
+
 -- 4:  Muestra el promedio de duración (length) de las películas por idioma y filtra aquellos idiomas con duración media estrictamente mayor a 110 minutos.
+SELECT language_id, COUNT(language.name) AS peliculas,name,AVG(film.length) AS duracion
+FROM film_category JOIN film USING(film_id)
+JOIN language USING(language_id)
+GROUP BY language_id
+HAVING film.length > 110;
 -- 5:  Para cada película, muestra cuántas copias hay en el inventario.
+SELECT COUNT(rental_duration) AS copias
+FROM film_category JOIN film USING(film_id)
+JOIN inventory USING(film_id);
 -- 6:  Lista solo las películas que tienen al menos 5 copias en inventario.
+SELECT *
+FROM
 -- 7:  Para cada artículo de inventario, cuenta cuántos alquileres se han realizado.
 -- 8:  Para cada cliente, muestra cuántos alquileres ha realizado en total.
 -- 9:  Lista los clientes con 30 o más alquileres acumulados.
