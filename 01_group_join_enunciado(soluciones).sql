@@ -5,14 +5,17 @@ use sakila;
 -- SECCIÓN A) 30 CONSULTAS CON JOIN DE 2 TABLAS
 -- ==============================================
 -- 1:  Para cada actor, muestra el número total de películas en las que aparece; es decir, cuenta cuántas filas de film_actor corresponden a cada actor.
-SELECT actor_id,COUNT(film.title)
+SELECT CONCAT(first_name,' ',last_name) AS nombre,COUNT(film.title)
 FROM actor JOIN film_actor USING(actor_id)
 JOIN film USING(film_id)
 GROUP BY actor_id;
 
 -- 2:  Lista solo los actores que participan en 20 o más películas (umbral alto) con su conteo.
-SELECT actor_id,COUNT(film
-
+SELECT CONCAT(first_name,' ',last_name) AS nombres, COUNT(film.title)
+FROM actor JOIN film_actor USING(actor_id)
+JOIN film USING(film_id)
+GROUP BY actor_id
+HAVING COUNT(film_id) > 20;
 -- 3:  Para cada idioma, indica cuántas películas están catalogadas en ese idioma.
 -- 4:  Muestra el promedio de duración (length) de las películas por idioma y filtra aquellos idiomas con duración media estrictamente mayor a 110 minutos.
 -- 5:  Para cada película, muestra cuántas copias hay en el inventario.
