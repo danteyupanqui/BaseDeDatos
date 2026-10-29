@@ -33,15 +33,46 @@ SELECT COUNT(rental_duration) AS copias
 FROM film_category JOIN film USING(film_id)
 JOIN inventory USING(film_id);
 -- 6:  Lista solo las películas que tienen al menos 5 copias en inventario.
-SELECT *
-FROM
+SELECT title,COUNT(film_id)
+FROM film JOIN inventory USING(film_id)
+JOIN store USING(store_id)
+GROUP BY title
+HAVING COUNT(film_id) < 5;
 -- 7:  Para cada artículo de inventario, cuenta cuántos alquileres se han realizado.
+SELECT title,inventory_id,COUNT(film_id)
+FROM film JOIN inventory USING(film_id)
+JOIN rental USING(inventory_id)
+GROUP BY inventory_id;
+
 -- 8:  Para cada cliente, muestra cuántos alquileres ha realizado en total.
+SELECT inventory_id,CONCAT(first_name,' ',last_name) AS nombre,COUNT(film_id)
+FROM inventory JOIN rental USING(inventory_id)
+JOIN customer USING(customer_id);
 -- 9:  Lista los clientes con 30 o más alquileres acumulados.
+SELECT customer.customer_id,COUNT(rental.rental_id)
+FROM customer JOIN rental ON customer.customer_id = rental.customer_id
+GROUP BY customer.customer_id
+HAVING COUNT(inventory_id) >= 30;
 -- 10:  Para cada cliente, muestra el total de pagos (suma en euros/dólares) que ha realizado.
+SELECT customer.customer_id, SUM(amount)
+FROM customer JOIN payment USING(customer_id)
+GROUP BY customer.customer_id;
+
 -- 11:  Muestra los clientes cuyo importe total pagado es al menos 200.
+SELECT customer.customer_id, SUM(amount)
+FROM customer JOIN payment USING(customer_id)
+GROUP BY customer.customer_id
+HAVING SUM(amount) > 200;
 -- 12:  Para cada empleado (staff), muestra el número de pagos que ha procesado.
+SELECT staff.staff_id,CONCAT(first_name,' ',last_name) AS nombre, SUM(amount)
+FROM inventory JOIN store USING(store_id)
+JOIN staff USING(store_id)
+JOIN payment USING(staff_id)
+GROUP BY staff.staff_id;
 -- 13:  Para cada empleado, muestra el importe total procesado.
+SELECT staff.staff_id,SUM(amount)
+FROM staff JOIN payment USING(staff_id)
+GROUP BY staff.staff_id;
 -- 14:  Para cada tienda, cuenta cuántos artículos de inventario tiene.
 -- 15:  Para cada tienda, cuenta cuántos clientes tiene asignados.
 -- 16:  Para cada tienda, cuenta cuántos empleados (staff) tiene asignados.
