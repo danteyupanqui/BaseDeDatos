@@ -74,10 +74,27 @@ SELECT staff.staff_id,SUM(amount)
 FROM staff JOIN payment USING(staff_id)
 GROUP BY staff.staff_id;
 -- 14:  Para cada tienda, cuenta cuántos artículos de inventario tiene.
+SELECT COUNT(distinct store_id),(inventory.inventory_id)
+FROM inventory JOIN store USING(store_id)
+GROUP BY inventory.inventory_id;
 -- 15:  Para cada tienda, cuenta cuántos clientes tiene asignados.
+SELECT customer.customer_id, COUNT(DISTINCT store_id)
+FROM inventory JOIN store USING(store_id)
+JOIN customer USING(store_id)
+GROUP BY customer.customer_id;
 -- 16:  Para cada tienda, cuenta cuántos empleados (staff) tiene asignados.
+SELECT staff.staff_id, COUNT(DISTINCT store_id)
+FROM inventory JOIN store USING(store_id)
+JOIN staff USING(store_id)
+GROUP BY staff.staff_id;
 -- 17:  Para cada dirección (address), cuenta cuántas tiendas hay ubicadas ahí (debería ser 0/1 en datos estándar).
+SELECT address_id,COUNT(store_id)
+FROM store JOIN address USING(address_id)
+GROUP BY address_id;
 -- 18:  Para cada dirección, cuenta cuántos empleados residen en esa dirección.
+SELECT staff_id, COUNT(address_id)
+FROM address JOIN staff USING(address_id)
+GROUP BY staff_id;
 -- 19:  Para cada dirección, cuenta cuántos clientes residen ahí.
 -- 20:  Para cada ciudad, cuenta cuántas direcciones hay registradas.
 -- 21:  Para cada país, cuenta cuántas ciudades existen.
