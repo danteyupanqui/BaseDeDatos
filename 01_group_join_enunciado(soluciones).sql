@@ -80,13 +80,43 @@ GROUP BY staff.staff_id;
 -- 18:  Para cada dirección, cuenta cuántos empleados residen en esa dirección.
 -- 19:  Para cada dirección, cuenta cuántos clientes residen ahí.
 -- 20:  Para cada ciudad, cuenta cuántas direcciones hay registradas.
+SELECT city_id,city, COUNT(Distinct address.address_id) AS direcciones_registradas
+FROM city JOIN address USING(city_id)
+GROUP BY city_id;
 -- 21:  Para cada país, cuenta cuántas ciudades existen.
+SELECT country_id,country,COUNT(city_id)
+FROM country JOIN city USING(country_id)
+GROUP BY country_id;
 -- 22:  Para cada idioma, calcula la duración media de películas y muestra solo los idiomas con media entre 90 y 120 inclusive.
+SELECT name,AVG(film.length)
+FROM language JOIN film USING(language_id)
+GROUP BY name
+HAVING AVG(film.length) BETWEEN 90 and 120;
 -- 23:  Para cada película, cuenta el número de alquileres que se han hecho de cualquiera de sus copias (usando inventario).
+SELECT film_id,COUNT(inventory.inventory_id)
+FROM film JOIN inventory USING(film_id)
+GROUP BY film_id;
 -- 24:  Para cada cliente, cuenta cuántos pagos ha realizado en 2005 (usando el año de payment_date).
+SELECT CONCAT(first_name,' ',last_name),COUNT(payment_id)
+FROM customer JOIN payment USING(customer_id)
+WHERE YEAR (payment_date) = 2005
+GROUP BY customer.customer_id;
 -- 25:  Para cada película, muestra el promedio de tarifa de alquiler (rental_rate) de las copias existentes (es un promedio redundante pero válido).
+SELECT film_id,title,AVG(rental_rate)
+FROM film JOIN inventory USING(film_id)
+GROUP BY film_id;
+
 -- 26:  Para cada actor, muestra la duración media (length) de sus películas.
+SELECT actor_id, CONCAT(first_name,' ',last_name), AVG(film.length)
+FROM actor JOIN film_actor USING(actor_id)
+JOIN film USING(film_id)
+GROUP BY actor_id;
+
 -- 27:  Para cada ciudad, cuenta cuántos clientes hay (usando la relación cliente->address->city requiere 3 tablas; aquí contamos direcciones por ciudad).
+SELECT customer_id,city,COUNT
+FROM customer JOIN address USING(address_id)
+JOIN city USING(city_id)
+GROUP BY customer_id;
 -- 28:  Para cada película, cuenta cuántos actores tiene asociados.
 -- 29:  Para cada categoría (por id), cuenta cuántas películas pertenecen a ella (sin nombre de categoría para mantener 2 tablas).
 -- 30:  Para cada tienda, cuenta cuántos alquileres totales se originan en su inventario.
