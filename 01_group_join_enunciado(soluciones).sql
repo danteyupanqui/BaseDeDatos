@@ -135,8 +135,20 @@ FROM customer JOIN address USING(address_id)
 JOIN city USING(city_id)
 GROUP BY customer_id;
 -- 28:  Para cada película, cuenta cuántos actores tiene asociados.
+SELECT actor_id, CONCAT(first_name,' ',last_name), COUNT(title)
+FROM actor JOIN film_actor USING(actor_id)
+JOIN film USING(film_id)
+group by actor_id;
+
 -- 29:  Para cada categoría (por id), cuenta cuántas películas pertenecen a ella (sin nombre de categoría para mantener 2 tablas).
+SELECT category_id, COUNT(title)
+FROM film_category JOIN film USING(film_id)
+GROUP BY category_id;
 -- 30:  Para cada tienda, cuenta cuántos alquileres totales se originan en su inventario.
+SELECT store_id, COUNT(rental_id)
+FROM rental JOIN inventory USING(inventory_id)
+JOIN store USING(store_id)
+GROUP BY store_id;
 -- ==============================================
 -- SECCIÓN B) 30 CONSULTAS CON JOIN DE 3 TABLAS
 -- ==============================================
