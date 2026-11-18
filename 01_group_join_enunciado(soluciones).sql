@@ -371,7 +371,9 @@ WHERE YEAR (payment_date) = 2005
 GROUP BY address_id, customer_id;
 -- 65:  Para cada tienda, cuenta cuántos actores distintos aparecen en las películas de su inventario.
 SELECT *
-FROM store JOIN 
+FROM store JOIN inventory USING (store_id)
+JOIN film USING(film_id)
+JOIN film_actor USING(film_id);
 -- 66:  Para cada idioma, cuenta cuántos alquileres totales se han hecho de películas en ese idioma.
 SELECT language.language_id, language.name, COUNT(rental.rental_id)
 FROM language l
@@ -424,7 +426,7 @@ JOIN rental ON inventory.inventory_id = rental.inventory_id
 JOIN payment ON rental.rental_id = payment.rental_id
 GROUP BY store.store_id, category.category_id;
 -- 73:  Para cada actor, cuenta en cuántas tiendas distintas se han alquilado sus películas.
-SELECT actor_id, first_name, last_name, COUNT(DISTINCT store_id)
+SELECT actor_id, CONCAT(first_name,' ',last_name), COUNT(DISTINCT store_id)
 FROM actor
 JOIN film_actor USING(actor_id)
 JOIN inventory USING(film_id)
@@ -453,7 +455,7 @@ JOIN address ON city.city_id = address.city_id
 JOIN store ON address.address_id = store.address_id
 GROUP BY country.country_id;
 -- 77:  Para cada cliente, cuenta los alquileres en los que la devolución (return_date) fue el mismo día del alquiler.
-SELECT customer_id, first_name, last_name, COUNT(rental_id)
+SELECT customer_id, CONCAT(first_name,'  ',last_name), COUNT(rental_id)
 FROM customer
 JOIN rental USING(customer_id)
 WHERE DATE(rental_date) = DATE(return_date)
@@ -487,7 +489,7 @@ GROUP BY country.country_id;
 -- SECCIÓN D) 20 CONSULTAS EXTRA (DIFICULTAD +), <=4 JOINS
 -- ==============================================
 -- 81:  Para cada cliente, muestra el total pagado con IVA teórico del 21% aplicado (total*1.21), redondeado a 2 decimales.
-SELECT customer.customer_id, customer.first_name, customer.last_name, ROUND(SUM(payment.amount) * 1.21, 2)
+SELECT customer.customer_id, CONCAT(customer.first_name,' ',customer.last_name), ROUND(SUM(payment.amount) * 1.21, 2)
 FROM customer
 JOIN payment ON customer.customer_id = payment.customer_id
 GROUP BY customer.customer_id;
@@ -515,13 +517,13 @@ JOIN rental ON inventory.inventory_id = rental.inventory_id
 WHERE DAYOFWEEK(rental.rental_date) = 1
 GROUP BY category.category_id;
 -- 85:  Para cada empleado, muestra el importe total por pagos realizados entre las 00:00 y 06:00 (inclusive 00:00, exclusivo 06:00).
-SELECT staff_id, first_name, last_name, SUM(amount)
+SELECT staff_id, CONCAT(first_name,' ',last_name), SUM(amount)
 FROM staff
 JOIN payment USING(staff_id)
 WHERE TIME(payment_date) >= '00:00:00' AND TIME(payment_date) < '06:00:00'
 GROUP BY staff_id;
 -- 86:  Para cada actor, cuenta cuántas de sus películas tienen un título que contiene la palabra 'LOVE' (mayúsculas).
-SELECT actor.actor_id, actor.first_name, actor.last_name, COUNT(film.film_id)
+SELECT actor.actor_id, CONCAT(actor.first_name,' ',actor.last_name), COUNT(film.film_id)
 FROM actor
 JOIN film_actor ON actor.actor_id = film_actor.actor_id
 JOIN film ON film_actor.film_id = film.film_id
@@ -536,7 +538,7 @@ JOIN rental USING(inventory_id)
 JOIN payment USING(rental_id)
 GROUP BY language_id;
 -- 88:  Para cada cliente, cuenta en cuántos días distintos de 2005 realizó algún alquiler.
-SELECT customer.customer_id, customer.first_name, customer.last_name, COUNT(DISTINCT DATE(rental.rental_date))
+SELECT customer.customer_id, CONCAT(customer.first_name,' ',customer.last_name), COUNT(DISTINCT DATE(rental.rental_date))
 FROM customer
 JOIN rental ON customer.customer_id = rental.customer_id
 WHERE YEAR(rental.rental_date) = 2005
@@ -567,7 +569,7 @@ JOIN inventory USING(inventory_id)
 JOIN film_category USING(film_id)
 GROUP BY country_id;
 -- 92:  Para cada cliente, muestra el importe medio de sus pagos redondeado a 2 decimales, solo si ha hecho al menos 10 pagos.
-SELECT customer.customer_id, customer.first_name, customer.last_name, ROUND(AVG(payment.amount), 2)
+SELECT customer.customer_id, CONCAT(customer.first_name,' ',customer.last_name), ROUND(AVG(payment.amount), 2)
 FROM customer
 JOIN payment ON customer.customer_id = payment.customer_id
 GROUP BY customer.customer_id
@@ -615,7 +617,7 @@ GROUP BY country_id
 HAVING SUM(amount) >= 1000;
 -- 98:  Para cada cliente, cuenta cuántos días han pasado entre su primer y su último alquiler en 2005 (diferencia de fechas), mostrando solo clientes con >= 5 alquileres en 2005.
 --     (Se evita subconsulta calculando sobre el conjunto agrupado por cliente y usando MIN/MAX de rental_date en 2005).
-SELECT customer.customer_id, customer.first_name, customer.last_name, DATEDIFF(MAX(rental.rental_date), MIN(rental.rental_date))
+SELECT customer.customer_id, CONCAT(customer.first_name,' ',customer.last_name), DATEDIFF(MAX(rental.rental_date), MIN(rental.rental_date))
 FROM customer
 JOIN rental ON customer.customer_id = rental.customer_id
 WHERE YEAR(rental.rental_date) = 2005
